@@ -3,6 +3,48 @@ import picture from '../assets/avatar.jpg'
 import { route } from 'preact-router'
 import { L_1 } from '../store/lottery'
 
+function formatTimestamp(timestamp: string): string {
+    const now = new Date()
+    const date = new Date(timestamp)
+    const diffMs = now.getTime() - date.getTime()
+    const isFuture = diffMs < 0
+    const absDiffMs = Math.abs(diffMs)
+    const diffDays = Math.floor(absDiffMs / (1000 * 60 * 60 * 24))
+    const diffHours = Math.floor(absDiffMs / (1000 * 60 * 60))
+    const diffMinutes = Math.floor(absDiffMs / (1000 * 60))
+
+    if (isFuture) {
+        if (diffDays === 0) {
+            return 'Hoy'
+        } else if (diffDays === 1) {
+            return 'Mañana'
+        } else if (diffDays < 7) {
+            return `En ${diffDays} días`
+        } else {
+            return date.toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'short'
+            })
+        }
+    } else {
+        if (diffDays > 20) {
+            return date.toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            })
+        } else if (diffDays > 0) {
+            return `Hace ${diffDays} día${diffDays !== 1 ? 's' : ''}`
+        } else if (diffHours > 0) {
+            return `Hace ${diffHours} hora${diffHours !== 1 ? 's' : ''}`
+        } else if (diffMinutes > 0) {
+            return `Hace ${diffMinutes} minuto${diffMinutes !== 1 ? 's' : ''}`
+        } else {
+            return 'Ahora mismo'
+        }
+    }
+}
+
 
 function Networks() {
     return (
@@ -23,6 +65,12 @@ function Networks() {
                 <li>
                     <a className='btn-glass' href='https://x.com/Mictia00' target='blank' rel='noopener noreferrer'>
                         X
+                    </a>
+                </li>
+                <li>
+                    <span className="new-network-badge">¡Nueva!</span>
+                    <a className='btn-glass' href="https://www.facebook.com/share/1Guc9pfwqY/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
+                        Facebook
                     </a>
                 </li>
             </ul>
@@ -78,6 +126,12 @@ function Networks() {
                 <li>
                     <a className='btn-glass' href='https://www.youtube.com/@MictiaGAME' target='blank' rel='noopener noreferrer'>
                         Mictia GAME 🕹️ | GAMEPLAYS
+                    </a>
+                </li>
+                <li>
+                    <span className="new-network-badge">¡Nueva!</span>
+                    <a className='btn-glass' href="https://www.youtube.com/@MictiaBobux" target="_blank" rel="noopener noreferrer">
+                        Mictia Bobux
                     </a>
                 </li>
                 <li>
@@ -174,6 +228,27 @@ function Lottery() {
     )
 }
 
+function News({ children }: { children: any }) {
+    return (
+        <section className='news glass-card'>
+            <h2>¡Novedades!</h2>
+            <div className='divider'>═─────── ✦ ───────═</div>
+            <ul>
+                {children}
+            </ul>
+        </section>
+    )
+}
+
+function NewsItem({ timestamp, children }: { timestamp: string, children: any }) {
+    return (
+        <li>
+            <div className="news-timestamp">{formatTimestamp(timestamp)}</div>
+            {children}
+        </li>
+    )
+}
+
 export function Home() {
     return (
         <main className='home'>
@@ -185,6 +260,18 @@ export function Home() {
                 <h2>Streamer ・ Creadora de contenido  ・ Ilustradora</h2>
             </section>
 
+            <News>
+                <NewsItem timestamp="2025-10-11T18:16:00Z">
+                    <p>Debido a cosas recientes, decidi crear una <a href="https://www.facebook.com/share/1Guc9pfwqY/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">cuenta de facebook</a>, agradezco el apoyo <span>❤️</span></p>
+                </NewsItem>
+                <NewsItem timestamp="2025-10-23T21:20:00Z">
+                    <p>Cree un <a href="https://www.youtube.com/@MictiaBobux" target="_blank" rel="noopener noreferrer">canal de Roblox</a>, ¡suscríbete y te regalo 1 Robux!</p>
+                </NewsItem>
+                <NewsItem timestamp="2025-10-26T06:34:00Z">
+                    <h3>¡Empiezan los <a href="https://x.com/mictia00/status/1982345254884778450?s=46" target="_blank" rel="noopener noreferrer">premios Mictianos</a>!</h3> 
+                    <p>Cada mes premiaremos los memes, fanarts y clips más creativos</p>
+                </NewsItem>
+            </News>
             <Lottery />
             <Networks />
         </main>
